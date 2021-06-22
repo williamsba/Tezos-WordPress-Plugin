@@ -11,7 +11,7 @@ This WordPress plugin allows you to import your NFT collection from Hic et Nunc 
 
 ## Usage
 
-The WordPress Widget Boilerplate is ready to activate as-is (and it includes a sample widget with a title, content, and checkbox).
+The HEN WordPress Plugin is ready to activate as-is
 
 1. Upload all files to a 'hen' directory to your `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
