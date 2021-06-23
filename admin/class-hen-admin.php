@@ -133,10 +133,11 @@ class Hen_Admin {
 	public function hen_create_menu() {
              
 	    // Create custom top-level menu
-	    add_menu_page( 'HEN Settings', 'HEN', 'manage_options', 'hen-movies', array( $this, 'hen_admin_settings' ), 'dashicons-smiley' );
+	    add_menu_page( 'HEN Settings', 'H=N', 'manage_options', 'hen-nfts', array( $this, 'hen_admin_settings' ), 'dashicons-smiley' );
 
-	    add_submenu_page( 'hen-movies', 'Import your HEN NFTs', 'Import NFTs', 'manage_options', 'hen-import', array( $this, 'hen_import_nfts' ) );
+	    add_submenu_page( 'hen-nfts', 'Import your HEN NFTs', 'Import NFTs', 'manage_options', 'hen-import', array( $this, 'hen_import_nfts' ) );
              
+	    add_submenu_page( 'hen-nfts', 'Delete your HEN NFTs', 'Delete NFTs', 'manage_options', 'hen-delete', array( $this, 'hen_delete_nfts' ) );
 
 	}
 
@@ -320,27 +321,16 @@ class Hen_Admin {
 
 		?>
 		<h2>HEN - Import your HEN NFTs</h2>
+		<p>Import all HEN NFTs into the NFT custom post type in WordPress.</p>
 		<form method="post">
 			<?php submit_button( 'Import', 'primary', 'hen-import' ); ?>
 		</form>
-
-
-		<h3>Delete all imported NFTs. This will only delete content created by this plugin.</h3>
-	   <form method="post">
-	    	<?php submit_button( 'Delete', 'secondary', 'hen-delete' ); ?>
-	    </form>
 
 		<?php
 
 	    //Import NFTs if requested
 	    if ( !empty( $_POST["hen-import"] ) ) {
 	    	$this->hen_nft_import();
-	    }
-
-
-	    //Delete all imported NFT entries
-	    if ( !empty( $_POST["hen-delete"] ) ) {
-	    	$this->hen_nft_delete_all();
 	    }
 
 	}
@@ -430,6 +420,30 @@ class Hen_Admin {
 	}
 
 	/**
+	 * NFT Import Section
+	 *
+	 * @since    0.1
+	 */
+	public function hen_delete_nfts() {
+
+		?>
+		<h2>HEN - Delete your HEN NFTs</h2>
+
+		<P>Delete all imported NFTs. This will only delete content created by this plugin.</p>
+	   <form method="post">
+	    	<?php submit_button( 'Delete', 'primary', 'hen-delete' ); ?>
+	    </form>
+
+		<?php
+
+	    //Delete all imported NFT entries
+	    if ( !empty( $_POST["hen-delete"] ) ) {
+	    	$this->hen_nft_delete_all();
+	    }
+
+	}
+
+	/**
 	 * Delete all NFT entries created by this plugin
 	 *
 	 * @since    0.1
@@ -446,11 +460,17 @@ class Hen_Admin {
 			) 
 		);
 
+		$x = 0;
+
 		foreach ( $all_nfts as $eachpost ) {
 
 			wp_delete_post( $eachpost->ID, true );
 
+			$x++;
+
 		}
+
+		echo $x . ' NFT entries deleted';
 
 	}
 
