@@ -212,10 +212,6 @@ class Hen_Admin {
 
 		} ;
 
-		
-
-		
-
 	}
 
 	/**
@@ -230,7 +226,6 @@ class Hen_Admin {
 
 	    return $valid;
 	}
-
 
 	/**
 	 * Return the Tezos wallet metadata
@@ -256,9 +251,9 @@ class Hen_Admin {
 		?>
 		<p>
 			<ul>
-				<li><img src="https://services.tzkt.io/v1/avatars2/<?php echo $tz_wallet?>"></li>
-				<li><strong><?php echo $data->alias; ?></strong></li>
-				<li><?php echo $data->description; ?></li>
+				<li><img src="https://services.tzkt.io/v1/avatars2/<?php echo esc_attr( $tz_wallet ); ?>"></li>
+				<li><strong><?php echo esc_html( $data->alias ); ?></strong></li>
+				<li><?php echo esc_html( $data->description ); ?></li>
 				<li><?php //echo $data->twitter; ?></li>
 				<li><?php //echo $data->instagram; ?></li>
 				<li><?php //echo $data->facebook; ?></li>
@@ -266,7 +261,6 @@ class Hen_Admin {
 		</p>
 		<?php
 
-	    //return $code;
 	}
 
 	/**
@@ -422,9 +416,9 @@ class Hen_Admin {
 					update_post_meta( $nft_id, 'hen_nft_plugin', true );
 
 					//SET FEATURED IMAGE
+					//IPFS does not include a file extension, so this currently does not work.
+					//related trac ticket: https://core.trac.wordpress.org/ticket/18730
 					//$image = media_sideload_image( $hen_nft_file, $nft_id );
-
-					//var_dump( $image );
 
 	            echo '</li>';
 
@@ -435,7 +429,6 @@ class Hen_Admin {
 
 	}
 
-
 	/**
 	 * Delete all NFT entries created by this plugin
 	 *
@@ -444,9 +437,16 @@ class Hen_Admin {
 	public function hen_nft_delete_all() {
 
 		//delete all NFT custom post types entries that don't include the unique meta_data key set when created
-		$all_nfts = get_posts( array( 'post_type'=>'nft','numberposts'=>-1, 'meta_key'=>'hen_nft_plugin','meta_value'=>true ) );
+		$all_nfts = get_posts( 
+			array( 
+				'post_type' 	=>	'nft',
+				'numberposts' 	=>	-1, 
+				'meta_key'		=>	'hen_nft_plugin',
+				'meta_value'	=>	true 
+			) 
+		);
 
-		foreach ($all_nfts as $eachpost) {
+		foreach ( $all_nfts as $eachpost ) {
 
 			wp_delete_post( $eachpost->ID, true );
 
