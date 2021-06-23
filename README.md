@@ -6,8 +6,6 @@ This WordPress plugin allows you to import your NFT collection from Hic et Nunc 
 
 * Connect to your Tezos Wallet
 * Import all NFT collectibles into a new NFT custom post type registered in WordPress
-* Uses Composer to handle linting and code quality tools before committing it to a repository.
-* Uses a strict file organization scheme to make sure the assets are easily maintainable.
 
 ## Usage
 
