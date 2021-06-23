@@ -342,8 +342,133 @@ class Hen_Admin {
 	 */
 	public function hen_nft_import() {
 		
-	    $tz_wallet = $this->hen_get_wallet();
-	    $request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/token_balances' );
+		$tz_wallet = $this->hen_get_wallet();
+		
+		//get total tokens/NFTs in wallet (returns ALL NFTs regardless of balance)
+		$tz_total = $this->hen_get_total_nft_count( $tz_wallet );
+
+		//start the offset at 0
+		$the_offset = 0;
+
+		//LOOP THROUGH ALL TOKENS
+		for ( $loop_count = ceil( $tz_total / 10 ) ; $loop_count >= 0 ; $loop_count-- ) {
+
+				//Set the request URL to the BDC API
+				$request_url = 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/token_balances?sort_by=balance&offset=' .( $the_offset );
+
+				
+				//helpful when debugging to see the request URL being used
+				//echo 'REQUESTING: ' .esc_url_raw( $request_url ) .'<br />';
+
+			    $request = wp_remote_get( esc_url_raw( $request_url ) );
+
+
+			    // If an error is returned, return false to end the request
+			    if( is_wp_error( $request ) ) {
+			        return false;
+			    }
+
+			    // Retrieve only the body from the raw response
+			    $body = wp_remote_retrieve_body( $request );
+
+			    // Decode the JSON string
+			    $api_data = json_decode( $body );
+
+			    //var_dump( $api_data );
+
+			    // Verify the $data variable is not empty
+			    if( ! empty( $api_data ) ) {
+
+			    	//total tokens attached to the Tezos wallet
+			    	//this includes all tokens every owned. 
+			    	//Check balance > 0 to confirm it is still owned
+			    	//$total_tokens = absint( $api_data->total );
+
+			        echo '<ul>';
+
+			        // Loop through the returned dataset 
+			        for ( $i = 0 ; $i < 10; $i++ ) {
+
+			            if ( isset( $api_data->balances[$i]->name ) && !empty($api_data->balances[$i]->name) ) {
+
+			            	echo '<li>';
+			            	//echo 'SIZE OF: '.sizeof( $api_data->balances );
+			            	//set NFT name
+			            	$nft_name = $api_data->balances[$i]->name;
+			            	echo '<strong>'. $i . '. ' .$nft_name .' - IMPORTED</strong>';
+
+			            	//set NFT display URI
+			            	//$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $data->balances[$i]->display_uri );
+			            	
+			            	//echo $data->balances[$i]->formats[0]->uri;
+			            	$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $api_data->balances[$i]->formats[0]->uri );
+
+			            	//echo '<img src="' .esc_attr( $nft_file ). '" height="150" />';
+
+			            	//set NFT description
+			            	$nft_desc = ( !empty( $api_data->balances[$i]->name ) ) ? $api_data->balances[$i]->name : '';
+
+			            	//set NFT post data
+							$post_data = array(
+							            'post_title'    => $nft_name,
+							            'post_content'  => $nft_desc,
+							            'post_status'   => 'publish',
+							            'post_type'     => 'nft',
+							            'post_author'   => get_current_user_id(),
+							            );
+
+							//Save new NFT CPT entry
+							$nft_id = wp_insert_post( $post_data );
+
+							//SAVE METADATA
+							$hen_token_id = $api_data->balances[$i]->token_id;
+							update_post_meta( $nft_id, 'hen_token_id', $hen_token_id );
+
+							$hen_nft_file = $nft_file;
+							update_post_meta( $nft_id, 'hen_nft_file', $hen_nft_file );
+
+							$hen_nft_creator = $api_data->balances[$i]->creators;
+							update_post_meta( $nft_id, 'hen_nft_creator', $hen_nft_creator );
+
+							$hen_nft_balance = $api_data->balances[$i]->balance;
+							update_post_meta( $nft_id, 'hen_nft_balance', $hen_nft_balance );
+
+							//unique metakey to track all NFT entries this plugin creates
+							update_post_meta( $nft_id, 'hen_nft_plugin', true );
+
+							//SET FEATURED IMAGE
+							//IPFS does not include a file extension, so this currently does not work.
+							//related trac ticket: https://core.trac.wordpress.org/ticket/18730
+							//$image = media_sideload_image( $hen_nft_file, $nft_id );
+
+			            	echo '</li>';
+
+			        	}
+
+			        
+
+			    	}
+
+			    	echo '</ul>';
+
+			    	//increase the offset by 10
+			    	$the_offset = $the_offset + 10;
+
+				}
+
+			}
+
+	}
+
+	/**
+	 * Count total NFTs in a wallet. 
+	 *
+	 * @since    0.1
+	 */
+	public function hen_get_total_nft_count( $tz_wallet ) {
+
+	    //$request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/token_balances' );
+		$request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/count' );
 
 	    // If an error is returned, return false to end the request
 	    if( is_wp_error( $request ) ) {
@@ -355,69 +480,27 @@ class Hen_Admin {
 
 	    // Decode the JSON string
 	    $data = json_decode( $body );
+	    //var_dump( $data );
+	    
+	    foreach ($data as $arr) {
 
-	    // Verify the $data variable is not empty
-	    if( ! empty( $data ) ) {
+	    	$total = $arr;
+	    }
+	    
+	    // Verify the $total variable is not empty
+	    if( ! empty( $total ) ) {
 
-	        echo '<ul>';
+	    	//total tokens attached to the Tezos wallet
+	    	//this includes all tokens every owned. 
+	    	//Check balance > 0 to confirm it is still owned
+	    	return absint( $total );
 
-	        // Loop through the returned dataset 
-	        for ( $i = 0 ; $i < 10; $i++ ) {
-
-	            echo '<li>';
-	            	
-	            	//set NFT name
-	            	$nft_name = $data->balances[$i]->name;
-	            	echo '<p><strong>' .$nft_name .' IMPORTED</strong></p>';
-
-	            	//set NFT display URI
-	            	$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $data->balances[$i]->display_uri );
-	            	echo '<img src="' .esc_attr( $nft_file ). '" height="150" />';
-
-	            	//set NFT description
-	            	$nft_desc = $data->balances[$i]->description;
-
-	            	//set NFT post data
-					$post_data = array(
-					            'post_title'    => $nft_name,
-					            'post_content'  => $nft_desc,
-					            'post_status'   => 'publish',
-					            'post_type'     => 'nft',
-					            'post_author'   => get_current_user_id(),
-					            );
-
-					//Save new NFT CPT entry
-					$nft_id = wp_insert_post( $post_data );
-
-					//SAVE METADATA
-					$hen_token_id = $data->balances[$i]->token_id;
-					update_post_meta( $nft_id, 'hen_token_id', $hen_token_id );
-
-					$hen_nft_file = $nft_file;
-					update_post_meta( $nft_id, 'hen_nft_file', $hen_nft_file );
-
-					$hen_nft_creator = $data->balances[$i]->creators;
-					update_post_meta( $nft_id, 'hen_nft_creator', $hen_nft_creator );
-
-					$hen_nft_balance = $data->balances[$i]->balance;
-					update_post_meta( $nft_id, 'hen_nft_balance', $hen_nft_balance );
-
-					//unique metakey to track all NFT entries this plugin creates
-					update_post_meta( $nft_id, 'hen_nft_plugin', true );
-
-					//SET FEATURED IMAGE
-					//IPFS does not include a file extension, so this currently does not work.
-					//related trac ticket: https://core.trac.wordpress.org/ticket/18730
-					//$image = media_sideload_image( $hen_nft_file, $nft_id );
-
-	            echo '</li>';
-
-	        }
-
-	        echo '</ul>';
+	    }else{
+	    	return 0;
 	    }
 
 	}
+
 
 	/**
 	 * NFT Import Section
