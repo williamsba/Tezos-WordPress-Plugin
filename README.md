@@ -8,7 +8,7 @@ This plugin is beta software. Use with caution and expect bugs.
 
 * Registers a new NFT custom post type
 * Connect your Tezos Wallet
-* Import all NFT collectibles into a new NFT custom post type registered in WordPress
+* Import all NFT collectibles into the new NFT CPT
 * Delete all imported content with one click
 
 ## Usage
