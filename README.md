@@ -1,6 +1,6 @@
-# HEN WordPress Plugin
+# Tezos WordPress Plugin
 
-This WordPress plugin allows you to import your NFT collection from Hic et Nunc (HEN) to your WordPress website. A NFT custom post type is registered where all NFTs, and metadata, will be stored. 
+This WordPress plugin allows you to import your NFT collection from the Tezos blockchain to your WordPress website. A NFT custom post type is registered where all NFTs, and metadata, will be stored. 
 
 This plugin is beta software. Use with caution and expect bugs.
 
@@ -13,9 +13,9 @@ This plugin is beta software. Use with caution and expect bugs.
 
 ## Usage
 
-The HEN WordPress Plugin is ready to activate
+The Tezos WordPress Plugin is ready to activate
 
-1. Upload all files to a `hen` directory in `/wp-content/plugins/` 
+1. Upload all files to a `tezos` directory in `/wp-content/plugins/` 
 2. Activate the plugin through the 'Plugins' menu in the WordPress Dashboard
 3. Navigate to the H=N menu and save your Tezos Wallet address
 4. Visit H=N -> Import NFTs submenu to import all NFTs under your account
@@ -23,4 +23,4 @@ The HEN WordPress Plugin is ready to activate
 
 ## Author Information
 
-The HEN WordPress plugin was created by [Brad Williams](https://twitter.com/williamsba/).
+The Tezos WordPress plugin was created by [Brad Williams](https://twitter.com/williamsba/).
