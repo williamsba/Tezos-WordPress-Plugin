@@ -108,7 +108,7 @@ class Hen_Admin {
 	public function hen_admin_settings() {
 	    ?>
 	    <div class="wrap">
-		    <h2>H=N WordPress Plugin</h2>
+		    <h2>Tezos WordPress Plugin</h2>
 		    <!--<img src="<?php echo plugin_dir_url( __FILE__ ) . 'img/HEN-logo.png'; ?>" width="150">-->
 		    <form action="options.php" method="post">
 			    <?php 
@@ -133,11 +133,11 @@ class Hen_Admin {
 	public function hen_create_menu() {
              
 	    // Create custom top-level menu
-	    add_menu_page( 'HEN Settings', 'H=N', 'manage_options', 'hen-nfts', array( $this, 'hen_admin_settings' ), 'dashicons-smiley' );
+	    add_menu_page( 'Tezos Settings', 'Tezos', 'manage_options', 'tezos-nfts', array( $this, 'hen_admin_settings' ), 'dashicons-smiley' );
 
-	    add_submenu_page( 'hen-nfts', 'Import your HEN NFTs', 'Import NFTs', 'manage_options', 'hen-import', array( $this, 'hen_import_nfts' ) );
+	    add_submenu_page( 'tezos-nfts', 'Import your Tezos NFTs', 'Import NFTs', 'manage_options', 'hen-import', array( $this, 'hen_import_nfts' ) );
              
-	    add_submenu_page( 'hen-nfts', 'Delete your HEN NFTs', 'Delete NFTs', 'manage_options', 'hen-delete', array( $this, 'hen_delete_nfts' ) );
+	    add_submenu_page( 'tezos-nfts', 'Delete your Tezos NFTs', 'Delete NFTs', 'manage_options', 'hen-delete', array( $this, 'hen_delete_nfts' ) );
 
 	}
 
@@ -161,7 +161,7 @@ class Hen_Admin {
 	    // Add a settings section
 	    add_settings_section( 
 	    	'hen_plugin_main', 
-	    	'HEN Plugin Settings',
+	    	'Tezos Plugin Settings',
 	        array( $this, 'hen_plugin_section_text' ), 
 	        'hen_plugin' 
 	    );
@@ -184,7 +184,7 @@ class Hen_Admin {
 	 */
 	public function hen_plugin_section_text() {
 
-	    echo '<p>Connect your Tezos Wallet to import your H=N collection to WordPress.</p>';
+	    echo '<p>Connect your Tezos Wallet to import your Tezos NFT collection to WordPress.</p>';
 
 	}
 	        
@@ -253,8 +253,8 @@ class Hen_Admin {
 		<p>
 			<ul>
 				<li><img src="https://services.tzkt.io/v1/avatars2/<?php echo esc_attr( $tz_wallet ); ?>"></li>
-				<li><strong><?php echo esc_html( $data->alias ); ?></strong></li>
-				<li><?php echo esc_html( $data->description ); ?></li>
+				<li><strong><?php echo isset( $data->alias ) ? esc_html( $data->alias ) : null; ?></strong></li>
+				<li><?php echo isset( $data->description ) ? esc_html( $data->description ) : null; ?></li>
 				<li><?php //echo $data->twitter; ?></li>
 				<li><?php //echo $data->instagram; ?></li>
 				<li><?php //echo $data->facebook; ?></li>
@@ -320,8 +320,8 @@ class Hen_Admin {
 	public function hen_import_nfts() {
 
 		?>
-		<h2>HEN - Import your HEN NFTs</h2>
-		<p>Import all HEN NFTs into the NFT custom post type in WordPress.</p>
+		<h2>Tezos WordPress Plugin - Import your Tezos NFTs</h2>
+		<p>Import all Tezos NFTs into the NFT custom post type in WordPress.</p>
 		<form method="post">
 			<?php submit_button( 'Import', 'primary', 'hen-import' ); ?>
 		</form>
@@ -467,7 +467,7 @@ class Hen_Admin {
 	 */
 	public function hen_get_total_nft_count( $tz_wallet ) {
 
-	    //$request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/token_balances' );
+		//$request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/token_balances' );
 		$request = wp_remote_get( 'https://api.better-call.dev/v1/account/mainnet/' .esc_attr( $tz_wallet ). '/count' );
 
 	    // If an error is returned, return false to end the request
@@ -510,9 +510,9 @@ class Hen_Admin {
 	public function hen_delete_nfts() {
 
 		?>
-		<h2>HEN - Delete your HEN NFTs</h2>
+		<h2>Tezos WordPress Plugin - Delete your Tezos NFTs</h2>
 
-		<P>Delete all imported NFTs. This will only delete content created by this plugin.</p>
+		<P>Delete all imported Tezos NFTs. This will only delete content created by this plugin.</p>
 	   <form method="post">
 	    	<?php submit_button( 'Delete', 'primary', 'hen-delete' ); ?>
 	    </form>
