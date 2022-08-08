@@ -17,9 +17,9 @@ The Tezos WordPress Plugin is ready to activate
 
 1. Upload all files to a `tezos` directory in `/wp-content/plugins/` 
 2. Activate the plugin through the 'Plugins' menu in the WordPress Dashboard
-3. Navigate to the H=N menu and save your Tezos Wallet address
-4. Visit H=N -> Import NFTs submenu to import all NFTs under your account
-5. Visit H=M -> Delete NFTs to delete all imported content
+3. Navigate to the Tezos menu and save your Tezos Wallet address
+4. Visit Tezos -> Import NFTs submenu to import all NFTs under your account
+5. Visit Tezos -> Delete NFTs to delete all imported content
 
 ## Author Information
 
