@@ -6,9 +6,9 @@
  * @package           Hen
  *
  * @wordpress-plugin
- * Plugin Name:       HEN WordPress Plugin
+ * Plugin Name:       Tezos WordPress Plugin
  * Plugin URI:        https://strangework.com
- * Description:       Display your Hic et Nunc NFT collectibles on your WordPress Website
+ * Description:       Display your Tezos NFT collectibles on your WordPress Website
  * Version:           0.1
  * Author:            Brad Williams
  * Author URI:        https://strangework.com
