@@ -395,23 +395,24 @@ class Hen_Admin {
 			            	//echo 'SIZE OF: '.sizeof( $api_data->balances );
 			            	//set NFT name
 			            	$nft_name = $api_data->balances[$i]->name;
-			            	echo '<strong>'. $i . '. ' .$nft_name .' - IMPORTED</strong>';
+			            	echo '<strong>'. $i . '. ' .esc_html( $nft_name ) .' - IMPORTED</strong>';
 
 			            	//set NFT display URI
 			            	//$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $data->balances[$i]->display_uri );
 			            	
 			            	//echo $data->balances[$i]->formats[0]->uri;
-			            	$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $api_data->balances[$i]->formats[0]->uri );
+			            	//$nft_file = str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $api_data->balances[$i]->formats[0]->uri );
+			            	$nft_file =  isset( $api_data->balances[$i]->formats[0]->uri ) ? str_replace( 'ipfs://', 'https://cloudflare-ipfs.com/ipfs/', $api_data->balances[$i]->formats[0]->uri ) : null;
 
 			            	//echo '<img src="' .esc_attr( $nft_file ). '" height="150" />';
 
 			            	//set NFT description
-			            	$nft_desc = ( !empty( $api_data->balances[$i]->name ) ) ? $api_data->balances[$i]->name : '';
+			            	$nft_desc = ( isset( $api_data->balances[$i]->name ) ) ? $api_data->balances[$i]->name : '';
 
 			            	//set NFT post data
 							$post_data = array(
-							            'post_title'    => $nft_name,
-							            'post_content'  => $nft_desc,
+							            'post_title'    => esc_html( $nft_name ),
+							            'post_content'  => esc_html( $nft_desc ),
 							            'post_status'   => 'publish',
 							            'post_type'     => 'nft',
 							            'post_author'   => get_current_user_id(),
@@ -422,16 +423,17 @@ class Hen_Admin {
 
 							//SAVE METADATA
 							$hen_token_id = $api_data->balances[$i]->token_id;
-							update_post_meta( $nft_id, 'hen_token_id', $hen_token_id );
+							update_post_meta( $nft_id, 'hen_token_id', absint( $hen_token_id ) );
 
 							$hen_nft_file = $nft_file;
 							update_post_meta( $nft_id, 'hen_nft_file', $hen_nft_file );
 
-							$hen_nft_creator = $api_data->balances[$i]->creators;
+							//$hen_nft_creator = $api_data->balances[$i]->creators;
+							$hen_nft_creator =  isset( $api_data->balances[$i]->creators ) ? $api_data->balances[$i]->creators : null;
 							update_post_meta( $nft_id, 'hen_nft_creator', $hen_nft_creator );
 
-							$hen_nft_balance = $api_data->balances[$i]->balance;
-							update_post_meta( $nft_id, 'hen_nft_balance', $hen_nft_balance );
+							$hen_nft_balance =  isset( $api_data->balances[$i]->balance ) ? $api_data->balances[$i]->balance : null;
+							update_post_meta( $nft_id, 'hen_nft_balance', absint( $hen_nft_balance ) );
 
 							//unique metakey to track all NFT entries this plugin creates
 							update_post_meta( $nft_id, 'hen_nft_plugin', true );
@@ -445,14 +447,12 @@ class Hen_Admin {
 
 			        	}
 
-			        
-
 			    	}
 
 			    	echo '</ul>';
 
 			    	//increase the offset by 10
-			    	$the_offset = $the_offset + 10;
+			    	$the_offset = $the_offset + 13;
 
 				}
 
@@ -545,9 +545,9 @@ class Hen_Admin {
 
 		$x = 0;
 
-		foreach ( $all_nfts as $eachpost ) {
+		foreach ( $all_nfts as $nft ) {
 
-			wp_delete_post( $eachpost->ID, true );
+			wp_delete_post( absint( $nft->ID ), true );
 
 			$x++;
 
